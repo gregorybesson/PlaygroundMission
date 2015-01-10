@@ -1,0 +1,42 @@
+
+{
+    "name" : "playground/mission",
+    "description" : "The mission module !",
+    "type" : "library",
+    "authors" : [{
+            "name" : "Greg Besson",
+            "email" : "gregory.besson@playground.gg",
+            "homepage" : "http://www.playground.gg"
+        }
+    ],
+    "keywords" : [
+        "zf2",
+        "playground",
+        "game"
+    ],
+    "homepage" : "https://github.com/gregorybesson/PlaygroundMission",
+    "license" : [
+        "BSD-3-Clause"
+    ],
+    "minimum-stability": "dev",
+    "require" : {
+        "php" : ">=5.3.3",
+        "zendframework/zendframework" : "2.*",
+        "playground/core" : "2.*",
+        "playground/design" : "2.*",
+        "playground/game" : "2.*"
+    },
+    "require-dev" : {
+        "phpunit/phpunit" : "3.7.*"
+    },
+    "autoload" : {
+        "psr-0" : {
+            "Mission" : "src/"
+        }
+    },
+	"extra": {
+        "branch-alias": {
+            "dev-master": "2.x-dev"
+        }
+    }
+}

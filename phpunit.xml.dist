@@ -3,13 +3,13 @@
 <phpunit bootstrap="./tests/Bootstrap.php">
     <testsuites>
         <testsuite name="mission">
-            <directory>./tests/MissionTest</directory>
+            <directory>./tests/PlaygroundMissionTest</directory>
         </testsuite>
     </testsuites>
     
     <filter>
         <whitelist>
-            <directory suffix=".php">./src/Mission</directory>
+            <directory suffix=".php">./src/PlaygroundMission</directory>
             <directory suffix=".phtml">./view</directory>
             <exclude>
                 <directory suffix=".php">./tests/</directory>

@@ -12,7 +12,7 @@ return array(
         'PlaygroundDesign',
         'PlaygroundUser',
    		'PlaygroundGame',
-        'Mission',
+        'PlaygroundMission',
         'PlaygroundPartnership',
     ),
     'module_listener_options' => array(

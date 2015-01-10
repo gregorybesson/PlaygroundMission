@@ -4,7 +4,7 @@
  * @author gbesson
  *
  */
-namespace Mission;
+namespace PlaygroundMission;
 
 use Zend\Session\Container;
 use Zend\Mvc\ModuleRouteListener;
@@ -71,7 +71,7 @@ class Module
             
 
             'invokables' => array(
-            	'mission_mission_service'      => 'Mission\Service\Mission',
+            	'mission_mission_service'      => 'PlaygroundMission\Service\Mission',
             ),
 
             'factories' => array(
@@ -83,16 +83,7 @@ class Module
                 },
 
                 'mission_mission_mapper' => function ($sm) {
-                	$mapper = new \Mission\Mapper\Mission(
-                			$sm->get('doctrine.entitymanager.orm_default'),
-                			$sm->get('mission_module_options')
-                	);
-
-                	return $mapper;
-                },
-
-                'mission_missionPuzzle_mapper' => function ($sm) {
-                	$mapper = new \Mission\Mapper\MissionPuzzle(
+                	$mapper = new Mapper\Mission(
                 			$sm->get('doctrine.entitymanager.orm_default'),
                 			$sm->get('mission_module_options')
                 	);
@@ -105,15 +96,6 @@ class Module
                 	$form = new Form\Admin\Mission(null, $sm, $translator);
                 	$mission = new Entity\Mission();
                 	$form->setInputFilter($mission->getInputFilter());
-
-                	return $form;
-                },
-
-                'mission_missionpuzzle_form' => function($sm) {
-                	$translator = $sm->get('translator');
-                	$form = new Form\Admin\MissionPuzzle(null, $sm, $translator);
-                	$missionPuzzle = new Entity\MissionPuzzle();
-                	$form->setInputFilter($missionPuzzle->getInputFilter());
 
                 	return $form;
                 },

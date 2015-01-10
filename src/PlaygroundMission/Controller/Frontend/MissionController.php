@@ -1,8 +1,8 @@
 <?php
 
-namespace Mission\Controller\Frontend;
+namespace PlaygroundMission\Controller\Frontend;
 
-use Mission\Entity\Mission;
+use PlaygroundMission\Entity\Mission;
 use PlaygroundGame\Controller\Frontend\GameController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;

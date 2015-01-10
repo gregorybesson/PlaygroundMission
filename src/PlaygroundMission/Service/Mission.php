@@ -1,6 +1,6 @@
 <?php
 
-namespace Mission\Service;
+namespace PlaygroundMission\Service;
 
 use Zend\ServiceManager\ServiceManagerAwareInterface;
 use Zend\ServiceManager\ServiceManager;
@@ -27,7 +27,7 @@ class Mission extends Game implements ServiceManagerAwareInterface
 
     public function getGameEntity()
     {
-        return new \Mission\Entity\Mission;
+        return new \PlaygroundMission\Entity\Mission;
     }
     
     /**
@@ -137,13 +137,13 @@ class Mission extends Game implements ServiceManagerAwareInterface
     public function createPuzzle(array $data)
     {
     
-    	$puzzle  = new \Mission\Entity\MissionPuzzle();
+    	$puzzle  = new \PlaygroundMission\Entity\MissionPuzzle();
     	$form  = $this->getServiceManager()->get('mission_missionpuzzle_form');
     	$entityManager = $this->getServiceManager()->get('doctrine.entitymanager.orm_default');
     	
     	$identifierInput = $form->getInputFilter()->get('identifier');
     	$noObjectExistsValidator = new NoObjectExistsValidator(array(
-    	    'object_repository' => $entityManager->getRepository('Mission\Entity\Mission'),
+    	    'object_repository' => $entityManager->getRepository('PlaygroundMission\Entity\Mission'),
     	    'fields' => 'identifier',
     	    'messages' => array(
     	        'objectFound' => 'This url already exists !'
@@ -190,7 +190,7 @@ class Mission extends Game implements ServiceManagerAwareInterface
     	
     	$identifierInput = $form->getInputFilter()->get('identifier');
     	$noObjectExistsValidator = new NoObjectExistsValidator(array(
-    	    'object_repository' => $entityManager->getRepository('Mission\Entity\Mission'),
+    	    'object_repository' => $entityManager->getRepository('PlaygroundMission\Entity\Mission'),
     	    'fields' => 'identifier',
     	    'messages' => array(
     	        'objectFound' => 'This url already exists !'

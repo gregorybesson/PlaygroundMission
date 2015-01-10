@@ -1,6 +1,6 @@
 <?php
 
-namespace Mission\Form\Admin;
+namespace PlaygroundMission\Form\Admin;
 
 use Zend\Form\Form;
 use PlaygroundCore\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
@@ -17,7 +17,7 @@ class Mission extends Game
         $entityManager = $sm->get('doctrine.entitymanager.orm_default');
 
         // having to fix a Doctrine-module bug :( https://github.com/doctrine/DoctrineModule/issues/180
-        $hydrator = new DoctrineHydrator($entityManager, 'Mission\Entity\Mission');
+        $hydrator = new DoctrineHydrator($entityManager, 'PlaygroundMission\Entity\Mission');
         $hydrator->addStrategy('partner', new \PlaygroundCore\Stdlib\Hydrator\Strategy\ObjectStrategy());
         $this->setHydrator($hydrator);
 

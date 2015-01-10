@@ -1,5 +1,5 @@
 <?php
-namespace MissionTest;
+namespace PlaygroundMissionTest;
 
 use Zend\Loader\AutoloaderFactory;
 use Zend\Mvc\Service\ServiceManagerConfig;
@@ -60,7 +60,7 @@ class Bootstrap
 
         $doctrine = $serviceManager->get('doctrine.entitymanager.orm_default');
         $doctrineEventManager = $doctrine->getEventManager();
-        $discriminatorEntry = new \Mission\Doctrine\Discriminator\Entry();
+        $discriminatorEntry = new \PlaygroundMission\Doctrine\Discriminator\Entry();
         $doctrineEventManager->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $discriminatorEntry);
 
         // disable FirePHP for Unit testing

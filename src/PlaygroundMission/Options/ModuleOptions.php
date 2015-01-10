@@ -1,6 +1,6 @@
 <?php
 
-namespace Mission\Options;
+namespace PlaygroundMission\Options;
 
 use PlaygroundGame\Options\ModuleOptions as GameModuleOptions;
 use Zend\Stdlib\AbstractOptions;

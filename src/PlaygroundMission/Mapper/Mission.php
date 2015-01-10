@@ -1,6 +1,6 @@
 <?php
 
-namespace Mission\Mapper;
+namespace PlaygroundMission\Mapper;
 
 use Doctrine\ORM\EntityManager;
 use Mission\Options\ModuleOptions;
@@ -76,7 +76,7 @@ class Mission extends Game
     public function getEntityRepository()
     {
         if (null === $this->er) {
-            $this->er = $this->em->getRepository('Mission\Entity\Mission');
+            $this->er = $this->em->getRepository('PlaygroundMission\Entity\Mission');
         }
 
         return $this->er;

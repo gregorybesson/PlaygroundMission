@@ -5,12 +5,12 @@ return array(
             'mission_entity' => array(
                 'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
                 'cache' => 'array',
-                'paths' => __DIR__ . '/../src/Mission/Entity'
+                'paths' => __DIR__ . '/../src/PlaygroundMission/Entity'
             ),
 
             'orm_default' => array(
                 'drivers' => array(
-                    'Mission\Entity' => 'mission_entity'
+                    'PlaygroundMission\Entity' => 'mission_entity'
                 )
             )
         )
@@ -47,8 +47,8 @@ return array(
 
     'controllers' => array(
         'invokables' => array(
-            'mission_mission' => 'Mission\Controller\Frontend\MissionController',
-            'mission_admin_mission' => 'Mission\Controller\Admin\MissionController',
+            'mission_mission' => 'PlaygroundMission\Controller\Frontend\MissionController',
+            'mission_admin_mission' => 'PlaygroundMission\Controller\Admin\MissionController',
         )
     ),
 

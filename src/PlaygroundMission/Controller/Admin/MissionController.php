@@ -1,11 +1,11 @@
 <?php
 
-namespace Mission\Controller\Admin;
+namespace PlaygroundMission\Controller\Admin;
 
 use PlaygroundGame\Entity\Game;
 
-use Mission\Entity\Mission;
-use Mission\Entity\MissionPuzzle;
+use PlaygroundMission\Entity\Mission;
+use PlaygroundMission\Entity\MissionPuzzle;
 
 use PlaygroundGame\Controller\Admin\GameController;
 use Zend\View\Model\ViewModel;

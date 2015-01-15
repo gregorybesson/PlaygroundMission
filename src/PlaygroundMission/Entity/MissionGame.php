@@ -7,12 +7,15 @@ use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\PrePersist;
 use Doctrine\ORM\Mapping\PreUpdate;
 use Zend\InputFilter\InputFilter;
+use Zend\InputFilter\InputFilterAwareInterface;
+use Zend\InputFilter\InputFilterInterface;
+use Zend\InputFilter\Factory as InputFactory;
 
 /**
  * @ORM\Entity @HasLifecycleCallbacks
  * @ORM\Table(name="game_mission_game")
  */
-class MissionGame
+class MissionGame implements InputFilterAwareInterface
 {
 
     protected $inputFilter;
@@ -25,7 +28,7 @@ class MissionGame
     protected $id;
 
      /**
-     * @ORM\ManyToOne(targetEntity="Game")
+     * @ORM\ManyToOne(targetEntity="PlaygroundGame\Entity\Game")
      * @ORM\JoinColumn(name="game_id", referencedColumnName="id", onDelete="CASCADE")
      **/
     protected $game;
@@ -61,6 +64,11 @@ class MissionGame
      * Constructor
      */
     public function __construct()
+    {
+        $this->conditions = new ArrayCollection();
+    }
+
+    public function __clone()
     {
         $this->conditions = new ArrayCollection();
     }
@@ -237,10 +245,21 @@ class MissionGame
         return $this;
     }
 
+    public function setInputFilter (InputFilterInterface $inputFilter)
+    {
+        throw new \Exception("Not used");
+    }
+
     public function getInputFilter ()
     {
         if (! $this->inputFilter) {
             $inputFilter = new InputFilter();
+            $factory = new InputFactory();
+
+            $inputFilter->add($factory->createInput(array(
+                'name' => 'game',
+                'required' => false,
+            )));
             $this->inputFilter = $inputFilter;
         }
     

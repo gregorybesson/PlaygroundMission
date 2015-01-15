@@ -21,9 +21,9 @@ class Mission extends Game implements InputFilterAwareInterface
     const CLASSTYPE = 'mission';
     
     /**
-     * @ORM\OneToMany(targetEntity="MissionGame", mappedBy="mission", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="MissionGame", mappedBy="mission", cascade={"persist","remove"}, orphanRemoval=true)
      */
-    private $missionGames;
+    protected $missionGames;
 
     public function __construct()
     {
@@ -52,10 +52,14 @@ class Mission extends Game implements InputFilterAwareInterface
     
     public function addMissionGames(ArrayCollection $missionGames)
     {
+        //echo 'addMissionGames<br/>';
         foreach ($missionGames as $missionGame) {
+            //echo 'uu ' . $missionGame->getId();
+
             $missionGame->setMission($this);
             $this->missionGames->add($missionGame);
         }
+        //die('----fin----');
     }
     
     public function removeMissionGames(ArrayCollection $missionGames)
@@ -88,7 +92,6 @@ class Mission extends Game implements InputFilterAwareInterface
         return get_object_vars($this);
     }
 
-
     /**
      * Populate from an array.
      *
@@ -103,6 +106,16 @@ class Mission extends Game implements InputFilterAwareInterface
     {
         if (! $this->inputFilter) {
             $inputFilter = new InputFilter();
+            $factory = new InputFactory();
+
+            $inputFilter = parent::getInputFilter();
+            
+            // This definition is mandatory for the hydration to work in a form !!!!
+            $inputFilter->add($factory->createInput(array(
+                'name' => 'missionGames',
+                'required' => false,
+            )));
+            
 
             $this->inputFilter = $inputFilter;
         }

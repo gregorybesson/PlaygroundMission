@@ -20,57 +20,28 @@ class Mission extends Game
         $hydrator = new DoctrineHydrator($entityManager, 'PlaygroundMission\Entity\Mission');
         $hydrator->addStrategy('partner', new \PlaygroundCore\Stdlib\Hydrator\Strategy\ObjectStrategy());
         $this->setHydrator($hydrator);
+        
+        /*$this->setValidationGroup(array(
+            'MissionGame' => array(
+                'game'
+            )
+        ));*/
 
         parent::__construct($name, $sm, $translator);
 
+        $gameMissionFieldset = new MissionGameFieldset(null,$sm,$translator);
         $this->add(array(
-        		'name' => 'winners',
-        		'options' => array(
-        				'label' => $translator->translate('Winners number', 'mission')
-        		),
-        		'attributes' => array(
-        				'type' => 'text',
-        				'placeholder' => $translator->translate('Winners number', 'mission')
-        		)
-        ));
-        
-        $this->add(array(
-            'type' => 'Zend\Form\Element\Select',
-            'name' => 'replayPuzzle',
+            'type'    => 'Zend\Form\Element\Collection',
+            'name'    => 'missionGames',
             'options' => array(
-                'value_options' => array(
-                    '0' => $translator->translate('No', 'playgroundgame'),
-                    '1' => $translator->translate('Yes', 'playgroundgame')
-                ),
-                'label' => $translator->translate('Go to the next puzzle only when the previous is won', 'playgroundgame')
+                'id'    => 'missionGames',
+                'label' => $translator->translate('List of games', 'playgroundgame'),
+                'count' => 0,
+                'should_create_template' => true,
+                'allow_add' => true,
+                'allow_remove' => true,
+                'target_element' => $gameMissionFieldset
             )
         ));
-        
-        $this->add(array(
-        		'name' => 'timer',
-        		'type' => 'Zend\Form\Element\Radio',
-        		'attributes' => array(
-        				'required' => 'required',
-        				'value' => '0',
-        		),
-        		'options' => array(
-        				'label' => 'Use a Timer',
-        				'value_options' => array(
-        						'0' => $translator->translate('No', 'mission'),
-        						'1' => $translator->translate('yes', 'mission'),
-        				),
-        		),
-        ));
-        
-        $this->add(array(
-        		'name' => 'timerDuration',
-        		'type' => 'Zend\Form\Element\Text',
-        		'attributes' => array(
-        				'placeholder' => $translator->translate('Duration in seconds','mission'),
-        		),
-        		'options' => array(
-        				'label' => $translator->translate('Timer Duration','mission'),
-        		),
-        ));        
     }
 }

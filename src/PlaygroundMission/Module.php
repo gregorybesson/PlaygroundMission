@@ -90,6 +90,24 @@ class Module
 
                 	return $mapper;
                 },
+                
+                'mission_mission_game_mapper' => function ($sm) {
+                    $mapper = new Mapper\MissionGame(
+                        $sm->get('doctrine.entitymanager.orm_default'),
+                        $sm->get('mission_module_options')
+                    );
+                
+                    return $mapper;
+                },
+                
+                'mission_mission_game_condition_mapper' => function ($sm) {
+                    $mapper = new Mapper\MissionGameCondition(
+                        $sm->get('doctrine.entitymanager.orm_default'),
+                        $sm->get('mission_module_options')
+                    );
+                
+                    return $mapper;
+                },
 
                 'mission_mission_form' => function($sm) {
                 	$translator = $sm->get('translator');
@@ -98,6 +116,14 @@ class Module
                 	$form->setInputFilter($mission->getInputFilter());
 
                 	return $form;
+                },
+                
+                'mission_mission_game_form' => function(\Zend\ServiceManager\ServiceManager $sm) {
+                    $translator = $sm->get('translator');
+                    $form = new Form\Admin\MissionGameFieldset(null, $sm, $translator);
+                    $missionGame = new Entity\MissionGame();
+                    $form->setInputFilter($missionGame->getInputFilter());
+                    return $form;
                 },
             ),
         );

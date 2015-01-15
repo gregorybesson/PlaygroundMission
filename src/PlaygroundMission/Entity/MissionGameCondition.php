@@ -6,12 +6,14 @@ use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\PrePersist;
 use Doctrine\ORM\Mapping\PreUpdate;
 use Zend\InputFilter\InputFilter;
+use Zend\InputFilter\InputFilterAwareInterface;
+use Zend\InputFilter\InputFilterInterface;
 
 /**
  * @ORM\Entity @HasLifecycleCallbacks
  * @ORM\Table(name="game_mission_game_condition")
  */
-class MissionGameCondition
+class MissionGameCondition implements InputFilterAwareInterface
 {
 
     const NONE    = 0;
@@ -182,6 +184,10 @@ class MissionGameCondition
         $this->updatedAt = new \DateTime("now");
     }
 
+    public function setInputFilter (InputFilterInterface $inputFilter)
+    {
+        throw new \Exception("Not used");
+    }
    
     public function getInputFilter ()
     {

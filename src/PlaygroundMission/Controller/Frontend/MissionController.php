@@ -54,6 +54,58 @@ class MissionController extends GameController
 
     }
     
+    /**
+     * Homepage of the game
+     */
+    public function indexAction()
+    {
+    
+        $identifier = $this->getEvent()->getRouteMatch()->getParam('id');
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        $sg = $this->getGameService();
+        $channel = $this->getEvent()->getRouteMatch()->getParam('channel');
+        $isSubscribed = false;
+    
+        // Determine if the play button should be a CTA button (call to action)
+        $isCtaActive = false;
+    
+        $game = $sg->checkGame($identifier, false);
+        if (!$game) {
+            return $this->notFoundAction();
+        }
+    
+        // If on Facebook, check if you have to be a FB fan to play the game
+    
+        if ($channel == 'facebook') {
+            if ($game->getFbFan()) {
+                $isFan = $sg->checkIsFan($game);
+                if (!$isFan) {
+                    return $this->redirect()->toUrl($this->frontendUrl()->fromRoute('' . $game->getClassType().'/fangate',array('id' => $game->getIdentifier(), 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel'))));
+                }
+            }
+    
+            $isCtaActive = true;
+        }
+    
+        $entry = $sg->checkExistingEntry($game, $user);
+        if ($entry) {
+            $isSubscribed = true;
+        }
+    
+        $games = $sg->getMissionGames($game, $user);
+        
+        $viewModel = $this->buildView($game);
+        $viewModel->setVariables(array(
+            'user'             => $user,
+            'game'             => $game,
+            'games'            => $games,
+            'isSubscribed'     => $isSubscribed,
+            'flashMessages'    => $this->flashMessenger()->getMessages(),
+            'isCtaActive'      => $isCtaActive,
+        ));
+    
+        return $viewModel;
+    }
 
     public function playAction()
     {
@@ -61,8 +113,11 @@ class MissionController extends GameController
         $identifier = $this->getEvent()->getRouteMatch()->getParam('id');
         $user = $this->zfcUserAuthentication()->getIdentity();
         $sg = $this->getGameService();
-
+        
         $game = $sg->checkGame($identifier);
+        
+        $subGameIdentifier = $this->getEvent()->getRouteMatch()->getParam('gameId');
+        $subGame = $sg->checkGame($subGameIdentifier);
         
         $socialLinkUrl = $this->frontendUrl()->fromRoute('mission', array('id' => $game->getIdentifier(), 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel')), array('force_canonical' => true));
 
@@ -107,9 +162,7 @@ class MissionController extends GameController
                 $redirect = urlencode($this->frontendUrl()->fromRoute('mission/play', array('id' => $game->getIdentifier(), 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel')), array('force_canonical' => true)));
                 return $this->redirect()->toUrl($this->frontendUrl()->fromRoute('zfcuser/register', array('channel' => $this->getEvent()->getRouteMatch()->getParam('channel'))) . '?redirect='.$redirect);
             }
-
         }
-
 
         $entry = $sg->play($game, $user);
         if (!$entry) {
@@ -123,36 +176,24 @@ class MissionController extends GameController
             return $this->notFoundAction();
         }
         
-        if ($this->getRequest()->isPost()) {
-            $response = $this->getResponse();
-            $data = $this->getRequest()->getPost()->toArray();
+        $beforeLayout = $this->layout()->getTemplate();
+        $subViewModel = $this->forward()->dispatch('playgroundgame_'.$subGame->getClassType(), array('controller' => 'playgroundgame_'.$subGame->getClassType(), 'action' => 'play', 'id' => $subGameIdentifier, 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel')));
+        // suite au forward, le template de layout a changé, je dois le rétablir...
+        $this->layout()->setTemplate($beforeLayout);
         
-            $entry = $this->getGameService()->analyzeClue($game, $data, $user);
-
-            if($entry->getActive()){
-            $response->setContent(\Zend\Json\Json::encode(array(
-                'success' => $entry->getWinner(),
-                'url' => $this->frontendUrl()->fromRoute('' . $game->getClassType().'/play', array('id' => $game->getIdentifier(), 'channel' => $channel), array('force_canonical' => true))
-            )));
-            } else{
-                $response->setContent(\Zend\Json\Json::encode(array(
-                    'success' => $entry->getWinner(),
-                    'url' => $this->frontendUrl()->fromRoute('' . $game->getClassType().'/'.$game->nextStep($this->params('action')), array('id' => $game->getIdentifier(), 'channel' => $channel), array('force_canonical' => true))
-                )));
-            }
-            
-            return $response;
-        }
+        // give the ability to the mission to have its customized look and feel.
+        $templatePathResolver = $this->getServiceLocator()->get('Zend\View\Resolver\TemplatePathStack');
+        $l = $templatePathResolver->getPaths();
+        // I've already added the path for the game so the base path is $l[1]
+        $templatePathResolver->addPath($l[1].'custom/'.$game->getIdentifier());
         
-        $viewModel = $this->buildView($game);
-        $viewModel->setVariables(array(
-                'game' => $game,
-                'flashMessages' => $this->flashMessenger()->getMessages(),
-                'step' => $entry->getStep()
-            )
-        );
-
-        return $viewModel; 
+        $subViewModel->mission = $game;
+        
+        return $subViewModel;
+    }
+    
+    public function pd(){
+        die('okidoki');
     }
 
     public function resultAction()
@@ -167,16 +208,20 @@ class MissionController extends GameController
         if (!$game || $game->isClosed()) {
             return $this->notFoundAction();
         }
+        
+        $subGameIdentifier = $this->getEvent()->getRouteMatch()->getParam('gameId');
+        $subGame = $sg->checkGame($subGameIdentifier);
 
         $secretKey = strtoupper(substr(sha1(uniqid('pg_', true).'####'.time()),0,15));
         $socialLinkUrl = $this->frontendUrl()->fromRoute('mission', array('id' => $game->getIdentifier(), 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel')), array('force_canonical' => true)).'?key='.$secretKey;
         // With core shortener helper
         $socialLinkUrl = $this->shortenUrl()->shortenUrl($socialLinkUrl);
 
-        $lastEntry = $this->getGameService()->findLastInactiveEntry($game, $user, $this->params()->fromQuery('anonymous_identifier'));
+        //TODO check existence of an active entry
+        /*$lastEntry = $this->getGameService()->findLastInactiveEntry($game, $user, $this->params()->fromQuery('anonymous_identifier'));
         if (!$lastEntry) {
             return $this->redirect()->toUrl($this->frontendUrl()->fromRoute('mission', array('id' => $game->getIdentifier(), 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel')), array('force_canonical' => true)));
-        }
+        }*/
 
         if (!$user && !$game->getAnonymousAllowed()) {
             $redirect = urlencode($this->frontendUrl()->fromRoute('mission/result', array('id' => $game->getIdentifier(), 'channel' => $channel)));
@@ -186,6 +231,7 @@ class MissionController extends GameController
         $form = $this->getServiceLocator()->get('playgroundgame_sharemail_form');
         $form->setAttribute('method', 'post');
 
+        /*
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost()->toArray();
             $form->setData($data);
@@ -197,27 +243,34 @@ class MissionController extends GameController
                 }
             }
         }
+        */
 
         // buildView must be before sendMail because it adds the game template path to the templateStack
         // TODO : Improve this.
         $viewModel = $this->buildView($game);
         
-        $this->sendMail($game, $user, $lastEntry);
+        //$this->sendMail($game, $user, $lastEntry);
 
-        $nextGame = parent::getMissionGameService()->checkCondition($game, $lastEntry->getWinner(), true, $lastEntry);
+        $beforeLayout = $this->layout()->getTemplate();
+        $subViewModel = $this->forward()->dispatch('playgroundgame_'.$subGame->getClassType(), array('controller' => 'playgroundgame_'.$subGame->getClassType(), 'action' => 'play', 'id' => $subGameIdentifier, 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel')));
+        
+        if($this->getResponse()->getStatusCode() == 302){
+            $this->getResponse()->setStatusCode('200');
+            $urlRedirect = $this->getResponse()->getHeaders()->get('Location');
+            
+            $subViewModel = $this->forward()->dispatch('playgroundgame_'.$subGame->getClassType(), array('controller' => 'playgroundgame_'.$subGame->getClassType(), 'action' => 'result', 'id' => $subGameIdentifier, 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel')));
+        }
+        // suite au forward, le template de layout a changé, je dois le rétablir...
+        $this->layout()->setTemplate($beforeLayout);
 
-        $viewModel->setVariables(array(
-                'statusMail'       => $statusMail,
-                'game'             => $game,
-                'flashMessages'    => $this->flashMessenger()->getMessages(),
-                'form'             => $form,
-                'socialLinkUrl'    => $socialLinkUrl,
-                'secretKey'		   => $secretKey,
-                'nextGame'         => $nextGame,
-            )
-        );
-
-        return $viewModel;
+        // give the ability to the mission to have its customized look and feel.
+        $templatePathResolver = $this->getServiceLocator()->get('Zend\View\Resolver\TemplatePathStack');
+        $l = $templatePathResolver->getPaths();
+        // I've already added the path for the game so the base path is $l[1]
+        $templatePathResolver->addPath($l[1].'custom/'.$game->getIdentifier());
+        
+        $subViewModel->mission = $game;
+        return $subViewModel;
     }
 
     public function fbshareAction()

@@ -80,7 +80,7 @@ return array(
                             'play' => array(
                                 'type' => 'Segment', 
                                 'options' => array(
-                                    'route' => '/jouer[/:x][/:y]',
+                                    'route' => '/jouer[/:gameId]',
                                     'defaults' => array(
                                         'controller' => 'mission_mission',
                                         'action' => 'play'
@@ -88,9 +88,9 @@ return array(
                                 )
                             ),
                             'result' => array(
-                                'type' => 'Literal',
+                                'type' => 'Segment',
                                 'options' => array(
-                                    'route' => '/resultat',
+                                    'route' => '/resultat[/:gameId]',
                                     'defaults' => array(
                                         'controller' => 'mission_mission',
                                         'action' => 'result'
@@ -222,11 +222,11 @@ return array(
                             'create-mission' => array(
                                 'type' => 'Segment',
                                 'options' => array(
-                                    'route' => '/create-mission/:missionId',
+                                    'route' => '/create-mission/:gameId',
                                     'defaults' => array(
                                         'controller' => 'mission_admin_mission',
                                         'action' => 'createMission',
-                                        'missionId' => 0
+                                        'gameId' => 0
                                     )
                                 )
                             ),
@@ -241,6 +241,114 @@ return array(
                                     )
                                 )
                             ),
+                        ),
+                    ),
+                    'mission' => array(
+                        'type' => 'Literal',
+                        'options' => array(
+                            'route' => '/mission',
+                            'defaults' => array(
+                                'controller' => 'mission_admin_mission',
+                                'action' => 'list'
+                            )
+                        ),
+                        'child_routes' => array(
+                            'entry' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/:gameId/entries[/:p]',
+                                    'defaults' => array(
+                                        'controller' => 'mission_admin_mission',
+                                        'action' => 'entry',
+                                        'gameId' => 0
+                                    )
+                                )
+                            ),
+                            'download' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/download/:gameId',
+                                    'defaults' => array(
+                                        'controller' => 'mission_admin_mission',
+                                        'action' => 'download'
+                                    )
+                                )
+                            ),
+                            'list' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/list[/:p]',
+                                    'defaults' => array(
+                                        'controller' => 'mission_admin_mission',
+                                        'action' => 'list'
+                                    )
+                                )
+                            ),
+                            'create' => array(
+                                'type' => 'Literal',
+                                'options' => array(
+                                    'route' => '/create',
+                                    'defaults' => array(
+                                        'controller' => 'mission_admin_mission',
+                                        'action' => 'create'
+                                    )
+                                )
+                            ),
+                            'edit' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/edit/:missionId',
+                                    'defaults' => array(
+                                        'controller' => 'mission_admin_mission',
+                                        'action' => 'edit',
+                                        'missionId' => 0
+                                    )
+                                )
+                            ),
+                            'delete' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/delete/:missionId',
+                                    'defaults' => array(
+                                        'controller' => 'mission_admin_mission',
+                                        'action' => 'delete',
+                                        'missionId' => 0
+                                    )
+                                )
+                            ),
+                            'associate' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/associate/:missionId',
+                                    'defaults' => array(
+                                        'controller' => 'mission_admin_mission',
+                                        'action' => 'associate',
+                                        'missionId' => 0
+                                    )
+                                )
+                            ),
+                            'activate' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/activate/:missionId',
+                                    'defaults' => array(
+                                        'controller' => 'mission_admin_mission',
+                                        'action' => 'activate',
+                                        'missionId' => 0
+                                    )
+                                )
+                            ),
+                            'desactivate' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/desactivate/:missionId',
+                                    'defaults' => array(
+                                        'controller' => 'mission_admin_mission',
+                                        'action' => 'desactivate',
+                                        'missionId' => 0
+                                    )
+                                )
+                            )
                         )
                     )
                 )
@@ -249,7 +357,6 @@ return array(
     ),
 
     'navigation' => array(
-       
         'admin' => array(
             'playgroundgame' => array(
                 'pages' => array(

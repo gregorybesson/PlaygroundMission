@@ -54,6 +54,47 @@ class MissionController extends GameController
 
     }
     
+    public function loginAction()
+    {
+        $identifier = $this->getEvent()->getRouteMatch()->getParam('id');
+    
+        $sg = $this->getGameService();
+    
+        $game = $sg->checkGame($identifier, false);
+        if (!$game) {
+            return $this->notFoundAction();
+        }
+        
+        $subGameIdentifier = $this->getEvent()->getRouteMatch()->getParam('gameId');
+        $subGame = $sg->checkGame($subGameIdentifier);
+    
+        $beforeLayout = $this->layout()->getTemplate();
+        $subViewModel = $this->forward()->dispatch('playgroundgame_'.$subGame->getClassType(), array('controller' => 'playgroundgame_'.$subGame->getClassType(), 'action' => 'login', 'id' => $subGameIdentifier, 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel')));
+
+        if($this->getResponse()->getStatusCode() == 302){
+            $this->getResponse()->setStatusCode('200');
+            $urlRedirect = $this->getResponse()->getHeaders()->get('Location');
+            /*$subViewModel = $this->forward()->dispatch('playgroundgame_'.$game->getClassType(), array('controller' => 'playgroundgame_'.$game->getClassType(), 'action' => 'play', 'id' => $identifier, 'gameId' => $subGameIdentifier, 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel')));*/
+            if (preg_match('/\/'.$subGame->getClassType().'\/'.$subGame->getIdentifier().'\/connexion/', $urlRedirect)) {
+                return $this->redirect()->toUrl($this->url()->fromRoute('frontend/' . $game->getClassType() . '/login', array('id' => $identifier, 'gameId' => $subGameIdentifier, 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel'))));
+            } else {
+                return $this->redirect()->toUrl($this->url()->fromRoute('frontend/' . $game->getClassType() . '/play', array('id' => $identifier, 'gameId' => $subGameIdentifier, 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel'))));
+            }
+        }
+        
+        // suite au forward, le template de layout a changé, je dois le rétablir...
+        $this->layout()->setTemplate($beforeLayout);
+        
+        // give the ability to the mission to have its customized look and feel.
+        $templatePathResolver = $this->getServiceLocator()->get('Zend\View\Resolver\TemplatePathStack');
+        $l = $templatePathResolver->getPaths();
+        // I've already added the path for the game so the base path is $l[1]
+        $templatePathResolver->addPath($l[1].'custom/'.$game->getIdentifier());
+        $subViewModel->mission = $game;
+        
+        return $subViewModel;
+    }
+    
     /**
      * Homepage of the game
      */

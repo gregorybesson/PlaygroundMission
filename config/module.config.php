@@ -87,6 +87,26 @@ return array(
                                     )
                                 )
                             ),
+                            'login' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/connexion[/:gameId]',
+                                    'defaults' => array(
+                                        'controller' => 'mission_mission',
+                                        'action' => 'login'
+                                    )
+                                )
+                            ),
+                            'user-register' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/inscription[/:gameId]',
+                                    'defaults' => array(
+                                        'controller' => 'mission_mission',
+                                        'action' => 'userregister'
+                                    )
+                                )
+                            ),
                             'result' => array(
                                 'type' => 'Segment',
                                 'options' => array(

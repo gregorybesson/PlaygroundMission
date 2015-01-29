@@ -229,7 +229,20 @@ return array(
                                         )
                                     )
                                 )
-                            )
+                            ),
+                            'leaderboard' => array(
+                                'type' => 'segment',
+                                'options' => array(
+                                    'route' => '/leaderboard[/:filter][/:p]',
+                                    'constraints' => array(
+                                        'filter' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                    ),
+                                    'defaults' => array(
+                                        'controller' => 'mission_mission',
+                                        'action'     => 'leaderboard'
+                                    ),
+                                ),
+                            ),
                         )
                     ),
                 )

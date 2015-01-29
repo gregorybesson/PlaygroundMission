@@ -113,11 +113,24 @@ class MissionController extends GameController
         $identifier = $this->getEvent()->getRouteMatch()->getParam('id');
         $user = $this->zfcUserAuthentication()->getIdentity();
         $sg = $this->getGameService();
-        
+
         $game = $sg->checkGame($identifier);
         
         $subGameIdentifier = $this->getEvent()->getRouteMatch()->getParam('gameId');
         $subGame = $sg->checkGame($subGameIdentifier);
+
+        if(!$subGame){
+            $games = $sg->getMissionGames($game, $user);
+            foreach($games as $k=>$v){
+                $g = $v['game'];
+                $entry = $v['entry'];
+                if($g->getGame()->isStarted() && !$entry){
+                    $subGame = $g->getGame();
+                    $subGameIdentifier = $subGame->getIdentifier();
+                    break;
+                }
+            }
+        }
         
         $socialLinkUrl = $this->frontendUrl()->fromRoute('mission', array('id' => $game->getIdentifier(), 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel')), array('force_canonical' => true));
 
@@ -198,10 +211,6 @@ class MissionController extends GameController
         $subViewModel->mission = $game;
         
         return $subViewModel;
-    }
-    
-    public function pd(){
-        die('okidoki');
     }
 
     public function resultAction()

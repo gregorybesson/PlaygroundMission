@@ -124,7 +124,7 @@ class MissionController extends GameController
             foreach($games as $k=>$v){
                 $g = $v['game'];
                 $entry = $v['entry'];
-                if($g->getGame()->isStarted() && !$entry){
+                if($g->getGame()->isStarted()){
                     $subGame = $g->getGame();
                     $subGameIdentifier = $subGame->getIdentifier();
                     break;

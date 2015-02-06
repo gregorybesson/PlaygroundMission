@@ -269,7 +269,7 @@ class MissionController extends GameController
         //$this->sendMail($game, $user, $lastEntry);
 
         $beforeLayout = $this->layout()->getTemplate();
-        $subViewModel = $this->forward()->dispatch('playgroundgame_'.$subGame->getClassType(), array('controller' => 'playgroundgame_'.$subGame->getClassType(), 'action' => 'play', 'id' => $subGameIdentifier, 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel')));
+        $subViewModel = $this->forward()->dispatch('playgroundgame_'.$subGame->getClassType(), array('controller' => 'playgroundgame_'.$subGame->getClassType(), 'action' => 'result', 'id' => $subGameIdentifier, 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel')));
         
         if($this->getResponse()->getStatusCode() == 302){
             $this->getResponse()->setStatusCode('200');

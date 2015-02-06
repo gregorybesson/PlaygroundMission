@@ -196,7 +196,7 @@ class MissionController extends GameController
             $this->getResponse()->setStatusCode('200');
             $urlRedirect = $this->getResponse()->getHeaders()->get('Location');
         
-            $subViewModel = $this->forward()->dispatch('playgroundgame_'.$game->getClassType(), array('controller' => 'playgroundgame_'.$game->getClassType(), 'action' => 'result', 'id' => $identifier, 'gameId' => $subGameIdentifier, 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel')));
+            $subViewModel = $this->forward()->dispatch('mission_'.$game->getClassType(), array('controller' => 'playgroundgame_'.$game->getClassType(), 'action' => 'result', 'id' => $identifier, 'gameId' => $subGameIdentifier, 'channel' => $this->getEvent()->getRouteMatch()->getParam('channel')));
         }
         
         // suite au forward, le template de layout a changé, je dois le rétablir...

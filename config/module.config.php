@@ -107,6 +107,16 @@ return array(
                                     )
                                 )
                             ),
+                            'optin' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/optin[/:gameId]',
+                                    'defaults' => array(
+                                        'controller' => 'mission_mission',
+                                        'action' => 'optin'
+                                    )
+                                )
+                            ),
                             'result' => array(
                                 'type' => 'Segment',
                                 'options' => array(

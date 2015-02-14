@@ -409,12 +409,6 @@ return array(
                         'resource' => 'game',
                         'privilege' => 'add'
                     ),
-                    'mission_list' => array(
-                        'label' => 'Mission Management',
-                        'route' => 'admin/playgroundgame/list',
-                        'resource' => 'game',
-                        'privilege' => 'list'
-                    )
                 )
             )
         )

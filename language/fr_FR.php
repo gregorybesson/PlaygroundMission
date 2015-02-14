@@ -2,7 +2,6 @@
 return array(
 
     // Admin Mission
-    'Mission Management' => 'Gestion des missions',
     'Missions'           => 'Missions',
     'Add new mission'    => 'Ajouter une nouvelle mission',
     'Linked games'       => 'Jeux associés',

@@ -7,6 +7,7 @@ use PlaygroundGame\Entity\Game;
 use PlaygroundMission\Entity\Mission;
 
 use PlaygroundGame\Controller\Admin\GameController;
+use PlaygroundGame\Service\Game as AdminGameService;
 use Zend\View\Model\ViewModel;
 
 class MissionController extends GameController
@@ -25,7 +26,7 @@ class MissionController extends GameController
         $viewModel->setTemplate('playground-mission/mission/mission');
 
         $gameForm = new ViewModel();
-        $gameForm->setTemplate('playground-game/admin/game-form');
+        $gameForm->setTemplate('playground-game/game/game-form');
 
         $mission = new Mission();
 
@@ -45,7 +46,7 @@ class MissionController extends GameController
                 $data['prizes'] = array();
             }
 
-            $game = $service->create($data, $mission, 'mission_mission_form');
+            $game = $service->createOrUpdate($data, $mission, 'mission_mission_form');
             if ($game) {
 
                 $this->flashMessenger()->setNamespace('mission')->addMessage('The game was created');
@@ -74,7 +75,7 @@ class MissionController extends GameController
         $viewModel->setTemplate('playground-mission/mission/mission');
 
         $gameForm = new ViewModel();
-        $gameForm->setTemplate('playground-game/admin/game-form');
+        $gameForm->setTemplate('playground-game/game/game-form');
 
         $form   = $this->getServiceLocator()->get('mission_mission_form');
         $form->setAttribute('action', $this->url()->fromRoute('admin/playgroundgame/edit-mission', array('gameId' => $gameId)));
@@ -105,7 +106,7 @@ class MissionController extends GameController
                 $data['prizes'] = array();
             }
             
-            $result = $service->edit($data, $game, 'mission_mission_form');
+            $result = $service->createOrUpdate($data, $game, 'mission_mission_form');
 
             if ($result) {
 
